@@ -1,3 +1,5 @@
+import com.cellnex.api.sca.config.Constants;
+
 import java.sql.*;
 
 public class DBConnection {
@@ -5,8 +7,8 @@ public class DBConnection {
 	Connection conn;
 	Statement stmt;
 	
-	String[] connMain = {"jdbc:vertica://localhost:5433/dbname", "dbadmin", "pass"};
-	String[] connSupport = {"jdbc:vertica://localhost:5433/dbname", "dbadmin", "pass"};
+	String[] connMain = {"jdbc:vertica://172.16.2.75:5433/dbname", "dbadmin", "password"};
+	String[] connSupport = {"jdbc:vertica://172.16.2.75:5433/dbname", "dbadmin", "password"};
 	
 	public DBConnection(String db) {
 		try {
@@ -20,9 +22,9 @@ public class DBConnection {
 	
 	private void setConnection(String db) {
 		try {
-			if (db == 'main') {
+			if (Constants.MAIN.equalsIgnoreCase(db)) {
 				conn = DriverManager.getConnection(connMain[0], connMain[1], connMain[2]);
-			} else if(db == 'support') {
+			} else if(Constants.SUPPORT.equalsIgnoreCase(db)) {
 				conn = DriverManager.getConnection(connSupport[0], connSupport[1], connSupport[2]);
 			} else {  // Like main
 				conn = DriverManager.getConnection(connMain[0], connMain[1], connMain[2]);

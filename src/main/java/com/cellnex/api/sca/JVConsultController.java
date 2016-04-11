@@ -2,6 +2,7 @@ package com.cellnex.api.sca;
 
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.Statement;
 
 @Controller
@@ -21,19 +24,19 @@ public class JVConsultController {
 	Connection connSupp;
 	Statement stmt;
 	
-	private static String[] connMainStr = {"jdbc:vertica://10.12.70.169:5433/main", "dbadmin", ""};
-	private static String[] connSuppStr = {"jdbc:vertica://10.12.70.169:5433/main", "dbadmin", ""};
+	private static String[] connMainStr = {"jdbc:vertica://172.16.2.75:5433/main", "dbadmin", ""};
+	private static String[] connSuppStr = {"jdbc:vertica://172.16.2.75:5433/main", "dbadmin", ""};
 	//private static String[] connMainStr = {"jdbc:mysql://localhost/consmain", "root", "root"}; // 3306
 	//private static String[] connSuppStr = {"jdbc:mysql://localhost/conssupp", "root", "root"};
-	
+
 	public JVConsultController() {
 		try {
-			//Class.forName("com.vertica.jdbc.Driver");
-			//Class.forName("com.mysql.jdbc.Driver");
-			/*connMain = DriverManager.getConnection(connMainStr[0], connMainStr[1], connMainStr[2]);
+			Class.forName("com.vertica.jdbc.Driver");
+			Class.forName("com.mysql.jdbc.Driver");
+			connMain = DriverManager.getConnection(connMainStr[0], connMainStr[1], connMainStr[2]);
 			stmt = connMain.createStatement();
 			connSupp = DriverManager.getConnection(connSuppStr[0], connSuppStr[1], connSuppStr[2]);
-			stmt = connSupp.createStatement();*/
+			stmt = connSupp.createStatement();
 		} catch (Exception e) {
 			// ..
 		}
@@ -43,17 +46,29 @@ public class JVConsultController {
 	public String simple(ModelMap model) {
 		model.addAttribute("msg", "JCG Hello World!");
 		
-		/*
-		String sql = "SELECT * FROM main WHERE ...";
-		ResultSet rs = stmt.executeQuery(sql);
-		*/
-		//try { conn.close();	} catch (Exception e) {	}
+		try {
+			//String sql = "SELECT * FROM main WHERE ...";
+			String sql = "SELECT 1 FROM main";
+			Connection conn = DriverManager.getConnection(connSuppStr[0], connSuppStr[1], connSuppStr[2]);
+			Statement stmt = conn.createStatement();
+
+			ResultSet rs = null;
+			rs = stmt.executeQuery(sql);
+
+		} catch (Exception e){
+
+		}
+
 		return "mainConsult";
 	}
-	
-	@RequestMapping(value = "/complex/{par}", method = RequestMethod.GET)
+
+	/*-------------------Retrieve Single User--------------------------------------------------------*/
+
+	@RequestMapping(value = "/complex/{par}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	//@RequestMapping(value = "/complex/{par}", method = RequestMethod.GET)
 	public String complex(@PathVariable String par, ModelMap model) {
-		JSONObject obj=new JSONObject();
+        System.out.println("Fetching User with id " + par);
+        JSONObject obj=new JSONObject();
 		obj.put("name",par);
 		obj.put("num",new Integer(100));
 		par = obj.toString();
@@ -62,25 +77,36 @@ public class JVConsultController {
 		//try { conn.close();	} catch (Exception e) {	}
 		return "mainConsult2";
 	}
-	
-	
-	/*  POST
-	 *  @RequestMapping(method = RequestMethod.POST)
-		@ResponseBody 
-		public void addComputer(@RequestBody Computer computer) {
-		  computerStorage.add(computer);
-		}
-		
-		..
-		
-		Test POST http://localhost:8080/SpringREST/rest/computer
-		Before sending the request, add an http header Content-Type with the button
-		
-		Add Request Header of Rest client : Content-Type:application/json; charset=utf-8
-		add a JSON content in the request body 
-		  {"reference":"MAC","description":"Test","model":"MB Pro","brand":"Apple"}
-	 * 
-	 */
+    /*
+    public ResponseEntity<User> getUser(@PathVariable("id") long id) {
+        System.out.println("Fetching User with id " + id);
+        User user = userService.findById(id);
+        if (user == null) {
+            System.out.println("User with id " + id + " not found");
+            return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<User>(user, HttpStatus.OK);
+    }
+     */
+
+
+    /* -------------------Create a User-------------------------------------------------------- */
+
+    //  @RequestMapping(method = RequestMethod.POST)
+    //@ResponseBody
+    //public void addComputer(@RequestBody Computer computer) {
+    //computerStorage.add(computer);
+    //}
+    //
+    ////TODO
+    //
+    //Test POST http://localhost:8080/SpringREST/rest/computer
+    //Before sending the request, add an http header Content-Type with the button
+
+    //Add Request Header of Rest client : Content-Type:application/json; charset=utf-8
+    //&add a JSON content in the request body
+    //  {"reference":"MAC","description":"Test","model":"MB Pro","brand":"Apple"}
+
 	/******* SUBSCRIPTIONS *********/
 	@RequestMapping(value = "/subscription/create", method = RequestMethod.POST)
 	public ResponseEntity<Void> createSubscription(@RequestBody Subscription subscription) {
@@ -129,7 +155,9 @@ public class JVConsultController {
 		closeConn();
         return new ResponseEntity<List>(str, HttpStatus.OK);
 	}*/
-	
+
+    /*------------------- Update a User --------------------------------------------------------*/
+
 	@RequestMapping(value = "/subscription/update/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<Subscription> updateSubscription(@PathVariable("id") long id, @RequestBody Subscription subscription) {
 		// The id exist?
