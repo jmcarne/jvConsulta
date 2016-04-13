@@ -20,12 +20,12 @@ import java.sql.Statement;
 @RequestMapping("/jvconsult")
 public class JVConsultController {
 	
-	Connection connMain;
-	Connection connSupp;
-	Statement stmt;
+	private Connection connMain;
+	private Connection connSupp;
+	private Statement stmt;
 	
-	private static String[] connMainStr = {"jdbc:vertica://172.16.2.75:5433/main", "dbadmin", ""};
-	private static String[] connSuppStr = {"jdbc:vertica://172.16.2.75:5433/main", "dbadmin", ""};
+	private static String[] connMainStr = {"jdbc:vertica://172.16.2.85:5433/main", "dbadmin", "password"};
+	private static String[] connSuppStr = {"jdbc:vertica://172.16.2.85:5433/main", "dbadmin", "password"};
 	//private static String[] connMainStr = {"jdbc:mysql://localhost/consmain", "root", "root"}; // 3306
 	//private static String[] connSuppStr = {"jdbc:mysql://localhost/conssupp", "root", "root"};
 
@@ -41,14 +41,20 @@ public class JVConsultController {
 			// ..
 		}
 	}
-	
-	@RequestMapping(value = "/simple", method = RequestMethod.GET)
+
+	/*-------------------Retrieve  -----------------------------------------------------------------------------------*/
+
+	//@RequestMapping(value = "/simple", method = RequestMethod.GET)
+    @RequestMapping(value = "/simple", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String simple(ModelMap model) {
+
 		model.addAttribute("msg", "JCG Hello World!");
-		
+
 		try {
-			//String sql = "SELECT * FROM main WHERE ...";
-			String sql = "SELECT 1 FROM main";
+
+			//String sql = "SELECT * FROM main";
+			String sql = "SELECT node_name, node_state, node_address from nodes";
+			System.out.println("sql: "+ sql);
 			Connection conn = DriverManager.getConnection(connSuppStr[0], connSuppStr[1], connSuppStr[2]);
 			Statement stmt = conn.createStatement();
 
@@ -57,12 +63,13 @@ public class JVConsultController {
 
 		} catch (Exception e){
 
+            System.out.println(e.getMessage());
 		}
 
 		return "mainConsult";
 	}
 
-	/*-------------------Retrieve Single User--------------------------------------------------------*/
+	/*-------------------Retrieve Single User with parameter ---------------------------------------------------------*/
 
 	@RequestMapping(value = "/complex/{par}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	//@RequestMapping(value = "/complex/{par}", method = RequestMethod.GET)
@@ -70,7 +77,7 @@ public class JVConsultController {
         System.out.println("Fetching User with id " + par);
         JSONObject obj=new JSONObject();
 		obj.put("name",par);
-		obj.put("num",new Integer(100));
+		obj.put("num",100);
 		par = obj.toString();
 		model.addAttribute("msg", par);
 		
@@ -107,7 +114,11 @@ public class JVConsultController {
     //&add a JSON content in the request body
     //  {"reference":"MAC","description":"Test","model":"MB Pro","brand":"Apple"}
 
-	/******* SUBSCRIPTIONS *********/
+	/*--------------------SUBSCRIPTIONS--------------------------------------------------------*/
+	/*-----------------------------------------------------------------------------------------*/
+
+	/* -------------------Create a Subscription---------------------------------------------- */
+
 	@RequestMapping(value = "/subscription/create", method = RequestMethod.POST)
 	public ResponseEntity<Void> createSubscription(@RequestBody Subscription subscription) {
 		// check if subscription exist..
@@ -124,9 +135,11 @@ public class JVConsultController {
 		closeConn();
         return new ResponseEntity<Void>(/*headers, */HttpStatus.CREATED);
 	}
-	
+
+	/* -------------------Retrieve a Subscription---------------------------------------------- */
+
 	//@RequestMapping(value = "/subscription/read/{user}", method = RequestMethod.GET)
-	/*public ResponseEntity<List> readSubscriptions(@PathVariable String user) { //List<Subscription>
+	/*ublic ResponseEntity<List> readSubscriptions(@PathVariable String user) { //List<Subscription>
 		List<Subscription> subscriptions = new ArrayList<Subscription>(); //Get the subscriptions here!!!!
 		String tmp = "";
 		try {
@@ -135,7 +148,7 @@ public class JVConsultController {
 			stmt = connSupp.createStatement();
 			Statement stmtSupp = connSupp.createStatement();
 			ResultSet rsIns = null;
-			rsIns = stmtSupp.executeQuery("SELECT USER, USR, TABLE_NAME, CONDITION_NOTIFICATION FROM CONDITIONS WHERE USR = 'MARIO'");
+			rsIns = stmtSupp.executeQuery("SELECT USER, USR, TABLE_NAME, CONDITION_NOTIFICATION FROM CONDITIONS WHERE USR = 'user'");
 			while (rsIns.next()) {
 				Subscription s = new Subscription();
 				s.setUser(rsIns.getString(1));
@@ -161,12 +174,14 @@ public class JVConsultController {
 	@RequestMapping(value = "/subscription/update/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<Subscription> updateSubscription(@PathVariable("id") long id, @RequestBody Subscription subscription) {
 		// The id exist?
-		//User currentUser = userService.findById(id);
+		User currentUser = userService.findById(id);
         
         if (true) {
             //try { conn.close();	} catch (Exception e) {	}
             return new ResponseEntity<Subscription>(HttpStatus.NOT_FOUND);
-        }
+        } else {
+
+		}
  
         // Set the subscription
         //currentUser.setName(user.getName());
@@ -178,7 +193,8 @@ public class JVConsultController {
         return new ResponseEntity<Subscription>(subscription, HttpStatus.OK);
 		
 	}
-	
+
+	/*------------------- Delete a User --------------------------------------------------------*/
 	@RequestMapping(value = "/subscription/delete/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Void> deleteSubscription(@PathVariable("id") long id) {
 		// Find subscription
@@ -186,19 +202,23 @@ public class JVConsultController {
         
 		if (true/*user == null*/) {
 			closeConn();
-			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
-        }
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+
+		}
  
         // Delete
 		//userService.deleteUserById(id);
 		closeConn();
-        return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 	
 	private void closeConn() {
 		try {
 			connMain.close();
 			connSupp.close();
-		} catch (Exception e) {	}
+		} catch (Exception e) {
+			e.getMessage();
+		}
 	}
 }

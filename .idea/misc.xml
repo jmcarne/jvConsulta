@@ -20,6 +20,12 @@
     <ConfirmationsSetting value="0" id="Add" />
     <ConfirmationsSetting value="0" id="Remove" />
   </component>
+  <component name="ProjectResources">
+    <resource url="http://java.sun.com/xml/ns/javaee" location="http://java.sun.com/xml/ns/javaee" />
+    <resource url="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" location="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" />
+    <resource url="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" location="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" />
+    <resource url="web-app_3_0.xsd" location="$MAVEN_REPOSITORY$/org/springframework/spring-webmvc/4.2.5.RELEASE/spring-webmvc-4.2.5.RELEASE.jar!/org/springframework/web/servlet/config/spring-mvc-3.0.xsd" />
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="1.7" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/classes" />
   </component>

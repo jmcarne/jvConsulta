@@ -28,7 +28,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="jvConsulta" target="1.5" />
-      <module name="jvconsulta" target="1.5" />
+      <module name="jvconsulta" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -27,16 +27,24 @@
 		<artifactId>spring-core</artifactId>
 		<version>${spring.version}</version>
 	</dependency>
-	<dependency>
+	  <dependency>
 		<groupId>org.springframework</groupId>
 		<artifactId>spring-webmvc</artifactId>
 		<version>${spring.version}</version>
 	</dependency>
-	
+  	<!-- JSTL -->
+	  <dependency>
+	  <groupId>javax.servlet</groupId>
+	  <artifactId>jstl</artifactId>
+	  <version>${jstl.version}</version>
+  	</dependency>
   </dependencies>
 
   <properties>
-	<spring.version>4.2.5.RELEASE</spring.version>
+	  <jdk.version>1.7</jdk.version>
+	  <spring.version>4.2.5.RELEASE</spring.version>
+	  <jstl.version>1.2</jstl.version>
+	  <servletapi.version>3.1</servletapi.version>
   </properties>
   
   <build>
